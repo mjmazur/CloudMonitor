@@ -27,7 +27,7 @@ def plotData(data):
     plt.tight_layout()
     plt.savefig('test.png', dpi=300)
 
-address= ( b'192.168.1.10', 8888) #define server IP and port
+address= ( b'10.0.20.10', 8888) #define server IP and port
 client_socket =socket(AF_INET, SOCK_DGRAM) #Set up the Socket
 client_socket.settimeout(2) #Only wait 1 second for a response
 
