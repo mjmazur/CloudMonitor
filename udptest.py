@@ -46,11 +46,11 @@ while(1):
         writer.writerow(write_buffer.split()) # Append data to csv file
         cnt += 1
 
-        if cnt % 12 == 0:
+        if cnt % 6 == 0:
             plotData(value_array)
     except:
         pass
 
-    time.sleep(5) #delay before sending next command
+    time.sleep(10) #delay before sending next command
 
 f.close()
