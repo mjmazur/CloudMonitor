@@ -1,10 +1,6 @@
-import csv
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-
-from matplotlib.pylab import *
 from scipy import interpolate
 
 data = np.genfromtxt('test.csv', delimiter=',')
@@ -32,8 +28,6 @@ gs1.update(wspace=0.025, hspace=0.0) # set the spacing between axes.
 
 ax0 = plt.subplot(gs1[0])
 ax0.pcolor(np.mean(a, axis=1),cmap='Blues_r')
-# ax0.xaxis.set_major_formatter(plt.NullFormatter())
-# ax0.yaxis.set_major_formatter(plt.NullFormatter())
 ax0.set_xticklabels([])
 ax0.set_xticks([])
 ax0.set_yticklabels([])
