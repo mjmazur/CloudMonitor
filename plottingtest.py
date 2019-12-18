@@ -64,7 +64,8 @@ ax0.set_yticks([])
 ax1 = plt.subplot(gs1[1])
 ax1.plot(data[0:n*step-1,0], data[0:n*step-1,1]-data[0:n*step-1,2], color='black')
 ax1.set_xlim(min(data[0:n*step-1,0]), max(data[0:n*step-1,0]))
-
+ax1.set_xlabel('Time')
+ax1.set_ylabel('Sky Temp minus Ground Temp (*C)')
 
 # for i in range(2):
 #    # i = i + 1 # grid spec indexes from 0
