@@ -7,9 +7,10 @@ import matplotlib.gridspec as gridspec
 from socket import *
 from scipy import interpolate
 from logging.handlers import TimedRotatingFileHandler
+from datetime import datetime as dt
 
-name = time.strftime('%Y_%m_%d_%H_%M_%S', time.gmtime())
-date = time.strftime('%Y%m%d', time.localtime())
+#name = time.strftime('%Y_%m_%d_%H_%M_%S', time.gmtime())
+#date = time.strftime('%Y%m%d', time.localtime())
 
 #f=open(name+'.csv', 'a+');
 #writer = csv.writer(f,delimiter=',')
@@ -78,8 +79,11 @@ def setupTimedLog(logname):
                                        backupCount=30)
     logger.addHandler(handler)
 
-if __name__ == "__main__":
+def sendEmail():
+    now = dt.now()
+    nearmidnight = now.hour == 23 and now.minute ==59
 
+def main():
     log_file = "current.log"
     setupTimedLog(log_file)
 
@@ -113,3 +117,6 @@ if __name__ == "__main__":
         time.sleep(10) #delay before sending next command
 
     f.close()
+
+if __name__ == "__main__":
+    main()
