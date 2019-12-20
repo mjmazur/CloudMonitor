@@ -107,10 +107,10 @@ if __name__ == "__main__":
             write_buffer = str(int(time.time())) + ' ' + str(rec_data, 'utf-8') # Format string with Unix time and rec_data
             value_array = np.append(value_array, [write_buffer.split()], axis=0) # Append data to an array for plotting
             deltaT = value_array[cnt,1].astype(np.float)-value_array[cnt,2].astype(np.float)
-            print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]) + '   Delta T: ' + str(deltaT))
+            print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]) + '   Delta T: ' + str("%3.2f"% deltaT))
             # writer.writerow(write_buffer.split()) # Append data to csv file
             #logger.info(write_buffer)
-            logger.info(str(value_array[cnt,0]) + ',' + str(value_array[cnt,1]) + ',' + str(value_array[cnt,2]) + ',' + str(deltaT))
+            logger.info(str(value_array[cnt,0]) + ',' + str(value_array[cnt,1]) + ',' + str(value_array[cnt,2]) + ',' + str("%3.2f"% deltaT))
 
             cnt += 1
 
