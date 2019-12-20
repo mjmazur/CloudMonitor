@@ -28,6 +28,8 @@ def plotData(data):
     plt.savefig('test.png', dpi=300)
 
 def fancyPlot(data):
+    print('Plotting...')
+
     # Arrange the data into blocks and calculate the mean of each block
     # blocksize = 600
     samplerate = 6
@@ -38,7 +40,6 @@ def fancyPlot(data):
     xnew = np.arange(min(t),max(t),samplerate)
     ynew = f(xnew)
 
-    # interval = 1
     n = int(len(ynew))
 
     a = ynew[0:(n-1)].reshape(1,1,n-1)
@@ -55,7 +56,6 @@ def fancyPlot(data):
     ax0.set_xticks([])
     ax0.set_yticklabels([])
     ax0.set_yticks([])
-    #ax0.set_xlim(1, len(block[0])+1)
     plt.title('Cloud Cover', size=20)
 
     ax1 = plt.subplot(gs1[1])
@@ -67,7 +67,6 @@ def fancyPlot(data):
 
     plt.tight_layout()
     plt.savefig('test.png', dpi=300)
-
 
 address= ( b'10.0.20.10', 8888) #define server IP and port
 client_socket =socket(AF_INET, SOCK_DGRAM) #Set up the Socket
