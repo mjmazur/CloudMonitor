@@ -37,12 +37,8 @@ plt.figure(figsize = (10,6))
 gs1 = gridspec.GridSpec(2, 1, width_ratios=[1], height_ratios=[1,8])
 gs1.update(wspace=0.025, hspace=0.0) # set the spacing between axes. 
 
-xs = np.arange(0,len(ynew))
-ys = np.arange(0,len(ynew))
-
 ax0 = plt.subplot(gs1[0])
-#ax0.pcolorfast(block, cmap='Blues_r', vmin=-25, vmax=-6)
-ax0.pcolor(xs,ys,y, cmap='Blues_r', vmin=-25, vmax=-6)
+ax0.pcolorfast(block, cmap='Blues_r', vmin=-25, vmax=-6)
 
 ax0.set_xticklabels([])
 ax0.set_xticks([])
