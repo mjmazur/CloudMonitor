@@ -32,7 +32,7 @@ def fancyPlot(data):
 
     # Arrange the data into blocks and calculate the mean of each block
     # blocksize = 600
-    samplerate = 6
+    samplerate = 10
     t = data[:,0].astype(np.int)
     y = data[:,1].astype(np.float)-data[:,2].astype(np.float)
 
@@ -69,16 +69,17 @@ def fancyPlot(data):
 
 address= ( b'10.0.20.10', 8888) #define server IP and port
 client_socket =socket(AF_INET, SOCK_DGRAM) #Set up the Socket
-client_socket.settimeout(2) #Only wait 1 second for a response
+client_socket.settimeout(2) #Only wait 2 seconds for a response
 
 cnt = 0
 
 while(1):
     req_data = b'All' # Request all data
 
-    client_socket.sendto( req_data, address) # Send the data request
+    # client_socket.sendto( req_data, address) # Send the data request
 
     try:
+        client_socket.sendto( req_data, address) # Send the data request
         rec_data, addr = client_socket.recvfrom(2048) # Read the response from arduino
         write_buffer = str(int(time.time())) + ' ' + str(rec_data, 'utf-8') # Format string with Unix time and rec_data
         value_array = np.append(value_array, [write_buffer.split()], axis=0) # Append data to an array for plotting
