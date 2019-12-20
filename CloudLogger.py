@@ -69,65 +69,32 @@ def fancyPlot(data):
 
     plt.savefig('test.png', dpi=300)
 
-def timed_rotating_log(path, message):
+address= ( b'10.0.20.10', 8888) #define server IP and port
+client_socket =socket(AF_INET, SOCK_DGRAM) #Set up the Socket
+client_socket.settimeout(2) #Only wait 2 seconds for a response
 
-    logger = logging.getLogger("Rotating Log")
-    logger.setLevel(logging.INFO)
- 
-    handler = TimedRotatingFileHandler(path,
-                                       when="s",
-                                       interval=20,
-                                       backupCount=5)
-    logger.addHandler(handler)
- 
-    #for i in range(6):
-    logger.info(message)
-    #print(i)
-    time.sleep(1)
+cnt = 0
 
-if __name__ == "__main__":
+while(1):
+    req_data = b'All' # Request all data
 
-    # Setup logging
-    log_file = "current.log"
+    # client_socket.sendto( req_data, address) # Send the data request
 
-    logger = logging.getLogger("Rotating Log")
-    logger.setLevel(logging.INFO)
- 
-    handler = TimedRotatingFileHandler(log_file,
-                                       when="s",
-                                       interval=20,
-                                       backupCount=5)
-    logger.addHandler(handler)
+    try:
+        client_socket.sendto( req_data, address) # Send the data request
+        rec_data, addr = client_socket.recvfrom(2048) # Read the response from arduino
+        write_buffer = str(int(time.time())) + ' ' + str(rec_data, 'utf-8') # Format string with Unix time and rec_data
+        value_array = np.append(value_array, [write_buffer.split()], axis=0) # Append data to an array for plotting
+        print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]) + ' Delta T: ' + str(value_array[cnt,1]-value_array[cnt,2]))
+        writer.writerow(write_buffer.split()) # Append data to csv file
+        cnt += 1
 
-    # Setup remote cloud monitor
-    address= ( b'10.0.20.10', 8888) #define server IP and port
-    client_socket =socket(AF_INET, SOCK_DGRAM) #Set up the Socket
-    client_socket.settimeout(2) #Only wait 2 seconds for a response
+        if cnt % 6 == 0:
+            fancyPlot(value_array)
+            #plotData(value_array)
+    except:
+        pass
 
-    cnt = 0
+    time.sleep(10) #delay before sending next command
 
-    while(1):
-        req_data = b'All' # Request all data
-
-        # client_socket.sendto( req_data, address) # Send the data request
-
-        try:
-            client_socket.sendto( req_data, address) # Send the data request
-            rec_data, addr = client_socket.recvfrom(2048) # Read the response from arduino
-            write_buffer = str(int(time.time())) + ' ' + str(rec_data, 'utf-8') # Format string with Unix time and rec_data
-            value_array = np.append(value_array, [write_buffer.split()], axis=0) # Append data to an array for plotting
-            print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]) + ' Delta T: ' + str(value_array[cnt,1]-value_array[cnt,2]))
-            writer.writerow(write_buffer.split()) # Append data to csv file
-            logger.info(write_buffer)
-            
-            cnt += 1
-
-            if cnt % 6 == 0:
-                fancyPlot(value_array)
-                #plotData(value_array)
-        except:
-            pass
-
-        time.sleep(10) #delay before sending next command
-
-    f.close()
+f.close()
