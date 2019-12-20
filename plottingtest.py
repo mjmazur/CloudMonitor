@@ -5,13 +5,9 @@ import matplotlib.gridspec as gridspec
 from scipy import interpolate
 from datetime import datetime
 
-<<<<<<< HEAD
 data = pd.read_csv('current.log')
-data.columns = ['timestamp','SkyT','GroundT']
-=======
-data = pd.read_csv('test.csv')
 data.columns = ['timestamp','SkyT','GroundT','deltaT']
->>>>>>> 3c2cf54ed2360c99509a5a6f3121fa6527155a4e
+
 
 t = data['timestamp']
 y = data['SkyT']-data['GroundT']
