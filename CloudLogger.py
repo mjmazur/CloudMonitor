@@ -7,9 +7,10 @@ import matplotlib.gridspec as gridspec
 from socket import *
 from scipy import interpolate
 from logging.handlers import TimedRotatingFileHandler
+from datetime import datetime as dt
 
-name = time.strftime('%Y_%m_%d_%H_%M_%S', time.gmtime())
-date = time.strftime('%Y%m%d', time.localtime())
+#name = time.strftime('%Y_%m_%d_%H_%M_%S', time.gmtime())
+#date = time.strftime('%Y%m%d', time.localtime())
 
 #f=open(name+'.csv', 'a+');
 #writer = csv.writer(f,delimiter=',')
@@ -78,18 +79,13 @@ def setupTimedLog(logname):
                                        backupCount=30)
     logger.addHandler(handler)
 
-if __name__ == "__main__":
+def sendEmail():
+    now = dt.now()
+    nearmidnight = now.hour == 23 and now.minute ==59
 
+def main():
     log_file = "current.log"
-    #setupTimedLog(log_file)
-    logger = logging.getLogger("Rotating Log")
-    logger.setLevel(logging.INFO)
- 
-    handler = TimedRotatingFileHandler(log_file,
-                                       when="midnight",
-                                       interval=1,
-                                       backupCount=30)
-    logger.addHandler(handler)
+    setupTimedLog(log_file)
 
     # Setup remote cloud monitor
     address= ( b'10.0.20.10', 8888) #define server IP and port
@@ -106,11 +102,10 @@ if __name__ == "__main__":
             rec_data, addr = client_socket.recvfrom(2048) # Read the response from arduino
             write_buffer = str(int(time.time())) + ' ' + str(rec_data, 'utf-8') # Format string with Unix time and rec_data
             value_array = np.append(value_array, [write_buffer.split()], axis=0) # Append data to an array for plotting
-            deltaT = value_array[cnt,1].astype(np.float)-value_array[cnt,2].astype(np.float)
-            print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]) + '   Delta T: ' + str("%3.2f"% deltaT))
+            print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]))
             # writer.writerow(write_buffer.split()) # Append data to csv file
-            #logger.info(write_buffer)
-            logger.info(str(value_array[cnt,0]) + ',' + str(value_array[cnt,1]) + ',' + str(value_array[cnt,2]) + ',' + str("%3.2f"% deltaT))
+            # logger.info(write_buffer)
+            logger.info(str(value_array[cnt,0]) + ',' + str(value_array[cnt,1]) + ',' + str(value_array[cnt,2]))
 
             cnt += 1
 
@@ -122,3 +117,6 @@ if __name__ == "__main__":
         time.sleep(10) #delay before sending next command
 
     f.close()
+
+if __name__ == "__main__":
+    main()
