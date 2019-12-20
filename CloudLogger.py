@@ -81,7 +81,15 @@ def setupTimedLog(logname):
 if __name__ == "__main__":
 
     log_file = "current.log"
-    setupTimedLog(log_file)
+    #setupTimedLog(log_file)
+    logger = logging.getLogger("Rotating Log")
+    logger.setLevel(logging.INFO)
+ 
+    handler = TimedRotatingFileHandler(log_file,
+                                       when="midnight",
+                                       interval=1,
+                                       backupCount=30)
+    logger.addHandler(handler)
 
     # Setup remote cloud monitor
     address= ( b'10.0.20.10', 8888) #define server IP and port
@@ -98,10 +106,11 @@ if __name__ == "__main__":
             rec_data, addr = client_socket.recvfrom(2048) # Read the response from arduino
             write_buffer = str(int(time.time())) + ' ' + str(rec_data, 'utf-8') # Format string with Unix time and rec_data
             value_array = np.append(value_array, [write_buffer.split()], axis=0) # Append data to an array for plotting
-            print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]))
+            deltaT = value_array[cnt,1].astype(np.float)-value_array[cnt,2].astype(np.float)
+            print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]) + '   Delta T: ' + str(deltaT))
             # writer.writerow(write_buffer.split()) # Append data to csv file
-            # logger.info(write_buffer)
-            logger.info(str(value_array[cnt,0]) + ',' + str(value_array[cnt,1]) + ',' + str(value_array[cnt,2]))
+            #logger.info(write_buffer)
+            logger.info(str(value_array[cnt,0]) + ',' + str(value_array[cnt,1]) + ',' + str(value_array[cnt,2]) + ',' + str(deltaT))
 
             cnt += 1
 

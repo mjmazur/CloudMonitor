@@ -6,7 +6,7 @@ from scipy import interpolate
 from datetime import datetime
 
 data = pd.read_csv('test.csv')
-data.columns = ['timestamp','SkyT','GroundT']
+data.columns = ['timestamp','SkyT','GroundT','deltaT']
 
 t = data['timestamp']
 y = data['SkyT']-data['GroundT']
