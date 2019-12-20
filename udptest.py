@@ -27,6 +27,48 @@ def plotData(data):
     plt.tight_layout()
     plt.savefig('test.png', dpi=300)
 
+def fancyPlot(data):
+    # Arrange the data into blocks and calculate the mean of each block
+    # blocksize = 600
+    samplerate = 6
+    t = data[:,0]
+    y = data[:,1]-data[:,2]
+
+    f = interpolate.interp1d(t,y)
+    xnew = np.arange(min(t),max(t),samplerate)
+    ynew = f(xnew)
+
+    # interval = 1
+    n = int(len(ynew))
+
+    a = ynew[0:(n-1)].reshape(1,1,n-1)
+    block = np.mean(a, axis=1)
+
+    plt.figure(figsize = (10,6))
+    gs1 = gridspec.GridSpec(2, 1, width_ratios=[1], height_ratios=[1,8])
+    gs1.update(wspace=0.025, hspace=0.0) # set the spacing between axes. 
+
+    ax0 = plt.subplot(gs1[0])
+    ax0.pcolorfast(block, cmap='Blues_r', vmin=-25, vmax=-6)
+
+    ax0.set_xticklabels([])
+    ax0.set_xticks([])
+    ax0.set_yticklabels([])
+    ax0.set_yticks([])
+    #ax0.set_xlim(1, len(block[0])+1)
+    plt.title('Cloud Cover', size=20)
+
+    ax1 = plt.subplot(gs1[1])
+    ax1.plot(t, y, color='black')
+
+    ax1.set_xlim(min(t), max(t))
+    ax1.set_xlabel('Local Time', size=15)
+    ax1.set_ylabel('Sky Temp minus Ground Temp (*C)', size=15)
+
+    plt.tight_layout()
+    plt.savefig('test.png', dpi=300)
+
+
 address= ( b'10.0.20.10', 8888) #define server IP and port
 client_socket =socket(AF_INET, SOCK_DGRAM) #Set up the Socket
 client_socket.settimeout(2) #Only wait 1 second for a response
@@ -47,7 +89,8 @@ while(1):
         cnt += 1
 
         if cnt % 6 == 0:
-            plotData(value_array)
+            fancyPlot(value_array)
+            #plotData(value_array)
     except:
         pass
 
