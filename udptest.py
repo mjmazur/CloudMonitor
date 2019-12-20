@@ -15,12 +15,11 @@ value_array = np.empty((0,3))
 
 def plotData(data):
     print('Plotting...')
-    x = data[:,0].astype(np.int)
-    y1 = data[:,1].astype(np.float)
-    y2 = data[:,2].astype(np.float)
+    t = data[:,0].astype(np.int)
+    y = data[:,1].astype(np.float)-data[:,2].astype(np.float)
 
     fig, ax = plt.subplots(figsize=(14,10))
-    plt.scatter(x, y1-y2)
+    plt.scatter(t, y)
 
     ax.set_xlabel('Time', size=15)
     ax.set_ylabel('Temperature Difference (*C)', size=15)
@@ -34,8 +33,8 @@ def fancyPlot(data):
     # Arrange the data into blocks and calculate the mean of each block
     # blocksize = 600
     samplerate = 6
-    t = data[:,0]
-    y = data[:,1]-data[:,2]
+    t = data[:,0].astype(np.int)
+    y = data[:,1].astype(np.float)-data[:,2].astype(np.float)
 
     f = interpolate.interp1d(t,y)
     xnew = np.arange(min(t),max(t),samplerate)
@@ -66,7 +65,6 @@ def fancyPlot(data):
     ax1.set_xlabel('Local Time', size=15)
     ax1.set_ylabel('Sky Temp minus Ground Temp (*C)', size=15)
 
-    plt.tight_layout()
     plt.savefig('test.png', dpi=300)
 
 address= ( b'10.0.20.10', 8888) #define server IP and port
