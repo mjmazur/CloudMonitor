@@ -100,7 +100,8 @@ if __name__ == "__main__":
             value_array = np.append(value_array, [write_buffer.split()], axis=0) # Append data to an array for plotting
             print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]))
             # writer.writerow(write_buffer.split()) # Append data to csv file
-            logger.info(write_buffer)
+            # logger.info(write_buffer)
+            logger.info(str(value_array[cnt,0]) + ',' + str(value_array[cnt,1]) + ',' + str(value_array[cnt,2]))
 
             cnt += 1
 
