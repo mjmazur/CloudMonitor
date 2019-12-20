@@ -1,6 +1,6 @@
 import logging
 import time
-import csv
+#import csv
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -11,29 +11,28 @@ from logging.handlers import TimedRotatingFileHandler
 name = time.strftime('%Y_%m_%d_%H_%M_%S', time.gmtime())
 date = time.strftime('%Y%m%d', time.localtime())
 
-f=open(name+'.csv', 'a+');
-writer = csv.writer(f,delimiter=',')
+#f=open(name+'.csv', 'a+');
+#writer = csv.writer(f,delimiter=',')
 value_array = np.empty((0,3))
 
-def plotData(data):
-    print('Plotting...')
-    t = data[:,0].astype(np.int)
-    y = data[:,1].astype(np.float)-data[:,2].astype(np.float)
+# def plotData(data):
+#     print('Plotting...')
+#     t = data[:,0].astype(np.int)
+#     y = data[:,1].astype(np.float)-data[:,2].astype(np.float)
 
-    fig, ax = plt.subplots(figsize=(14,10))
-    plt.scatter(t, y)
+#     fig, ax = plt.subplots(figsize=(14,10))
+#     plt.scatter(t, y)
 
-    ax.set_xlabel('Time', size=15)
-    ax.set_ylabel('Temperature Difference (*C)', size=15)
+#     ax.set_xlabel('Time', size=15)
+#     ax.set_ylabel('Temperature Difference (*C)', size=15)
 
-    plt.tight_layout()
-    plt.savefig('test.png', dpi=300)
+#     plt.tight_layout()
+#     plt.savefig('test.png', dpi=300)
 
 def fancyPlot(data):
     print('Plotting...')
 
     # Arrange the data into blocks and calculate the mean of each block
-    # blocksize = 600
     samplerate = 10
     t = data[:,0].astype(np.int)
     y = data[:,1].astype(np.float)-data[:,2].astype(np.float)
@@ -69,19 +68,20 @@ def fancyPlot(data):
 
     plt.savefig('test.png', dpi=300)
 
-if __name__ == "__main__":
-
-    # Setup logging
-    log_file = "current.log"
-
+def setupTimedLog(logname):
     logger = logging.getLogger("Rotating Log")
     logger.setLevel(logging.INFO)
  
-    handler = TimedRotatingFileHandler(log_file,
+    handler = TimedRotatingFileHandler(logname,
                                        when="midnight",
                                        interval=1,
                                        backupCount=30)
     logger.addHandler(handler)
+
+if __name__ == "__main__":
+
+    log_file = "current.log"
+    setupTimedLog(log_file)
 
     # Setup remote cloud monitor
     address= ( b'10.0.20.10', 8888) #define server IP and port
@@ -92,23 +92,20 @@ if __name__ == "__main__":
 
     while(1):
         req_data = b'All' # Request all data
-
         # client_socket.sendto( req_data, address) # Send the data request
-
         try:
             client_socket.sendto( req_data, address) # Send the data request
             rec_data, addr = client_socket.recvfrom(2048) # Read the response from arduino
             write_buffer = str(int(time.time())) + ' ' + str(rec_data, 'utf-8') # Format string with Unix time and rec_data
             value_array = np.append(value_array, [write_buffer.split()], axis=0) # Append data to an array for plotting
             print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]))
-            writer.writerow(write_buffer.split()) # Append data to csv file
+            # writer.writerow(write_buffer.split()) # Append data to csv file
             logger.info(write_buffer)
 
             cnt += 1
 
             if cnt % 6 == 0:
                 fancyPlot(value_array)
-                #plotData(value_array)
         except:
             pass
 
