@@ -82,7 +82,7 @@ while(1):
         rec_data, addr = client_socket.recvfrom(2048) # Read the response from arduino
         write_buffer = str(int(time.time())) + ' ' + str(rec_data, 'utf-8') # Format string with Unix time and rec_data
         value_array = np.append(value_array, [write_buffer.split()], axis=0) # Append data to an array for plotting
-        print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]))
+        print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]) + ' Delta T: ' + str(value_array[cnt,1]-value_array[cnt,2]))
         writer.writerow(write_buffer.split()) # Append data to csv file
         cnt += 1
 
