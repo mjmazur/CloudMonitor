@@ -69,22 +69,6 @@ def fancyPlot(data):
 
     plt.savefig('test.png', dpi=300)
 
-def timed_rotating_log(path, message):
-
-    logger = logging.getLogger("Rotating Log")
-    logger.setLevel(logging.INFO)
- 
-    handler = TimedRotatingFileHandler(path,
-                                       when="s",
-                                       interval=20,
-                                       backupCount=5)
-    logger.addHandler(handler)
- 
-    #for i in range(6):
-    logger.info(message)
-    #print(i)
-    time.sleep(1)
-
 if __name__ == "__main__":
 
     # Setup logging
@@ -94,9 +78,9 @@ if __name__ == "__main__":
     logger.setLevel(logging.INFO)
  
     handler = TimedRotatingFileHandler(log_file,
-                                       when="s",
-                                       interval=20,
-                                       backupCount=5)
+                                       when="midnight",
+                                       interval=1,
+                                       backupCount=30)
     logger.addHandler(handler)
 
     # Setup remote cloud monitor
