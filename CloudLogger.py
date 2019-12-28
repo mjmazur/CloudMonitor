@@ -79,9 +79,13 @@ def setupTimedLog(logname):
                                        backupCount=30)
     logger.addHandler(handler)
 
-def sendEmail():
-    now = dt.now()
-    nearmidnight = now.hour == 23 and now.minute ==59
+# def sendEmail():
+#     t = time.localtime()
+#     nearmidnight = t.tm_hour == 23 and t.tm_min ==59
+#     nearnoon = t.tm_hour == 11 and t.tm_min == 59
+    
+#     if nearmidnight:
+
 
 def main():
     log_file = "current.log"
@@ -111,6 +115,8 @@ def main():
 
             if cnt % 6 == 0:
                 fancyPlot(value_array)
+
+            # sendEmail()
         except:
             pass
 
