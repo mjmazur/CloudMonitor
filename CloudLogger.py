@@ -75,7 +75,7 @@ def main():
     # Setup remote cloud monitor
     address= ( b'10.0.20.10', 8888) #define server IP and port
     client_socket =socket(AF_INET, SOCK_DGRAM) #Set up the Socket
-    client_socket.settimeout(2) #Only wait 2 seconds for a response
+    client_socket.settimeout(5) #Only wait 2 seconds for a response
 
     cnt = 0
 
