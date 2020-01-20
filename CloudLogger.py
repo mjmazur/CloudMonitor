@@ -45,7 +45,7 @@ def fancyPlot(data):
     ax1.plot(t, y, color='black')
 
     ax1.set_xlim(min(t), max(t))
-    ax1.set_xlabel('Local Time', size=15)
+    ax1.set_xlabel('Time from Present (days)', size=15)
     ax1.set_ylabel('Sky Temp minus Ground Temp (*C)', size=15)
 
     plt.savefig('clouds.png', dpi=300)
