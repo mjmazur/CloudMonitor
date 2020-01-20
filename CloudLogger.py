@@ -159,7 +159,7 @@ def main():
         except:
             pass
 
-        time.sleep(10) #delay before sending next command
+        time.sleep(1) #delay before sending next command
 
     f.close()
 
