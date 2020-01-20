@@ -48,7 +48,7 @@ def fancyPlot(data):
     ax1.set_xlabel('Time from Present (days)', size=15)
     ax1.set_ylabel('Sky Temp minus Ground Temp (*C)', size=15)
 
-    plt.savefig('clouds.png', dpi=300)
+    plt.savefig('CloudCover-Up.png', dpi=300)
 
 def plotLog(logname):
     print('Making daily plot...')
@@ -99,7 +99,7 @@ def plotLog(logname):
     ax1.set_xlabel('Local Time', size=15)
     ax1.set_ylabel('Sky Temp minus Ground Temp (*C)', size=15)
 
-    plt.savefig('CloudCover.png', dpi=200)
+    plt.savefig('CloudCover-Today.png', dpi=200)
 
 # def setupTimedLog(logname):
 #     logger = logging.getLogger("Rotating Log")
