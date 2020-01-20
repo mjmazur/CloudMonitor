@@ -12,30 +12,13 @@ from datetime import datetime as dt
 from ftpmod import *
 
 def uploadFileFTP(sourceFile1, sourceFile2, server, username, password):
-    print('Uploading ' + sourceFilePath)
-    # myFTP = ftplib.FTP('ftp.orebits.space', 'colibri@orebits.space', 'fEa)d5qh(*^H')
-    # if destinationDirectory in [name for name, data in list(remote.mlsd())]:
-    #     print("Destination Directory does not exist. Creating it first")
-    #     myFTP.mkd(destinationDirectory)
-    # # Changing Working Directory
-    # myFTP.cwd(destinationDirectory)
-    # if os.path.isfile(sourceFilePath):
-    #     fh = open(sourceFilePath, 'rb')
-    #     myFTP.storbinary('STOR %s' % f, fh)
-    #     fh.close()
-    #     print('Done uploading...')
-    # else:
-    #     print("Source File does not exist")
-
     ftp = ftplib.FTP(server)
-    # ftp.set_debuglevel(2) 
-    # ftp.connect(server,21)
     ftp.login(username, password)
-    # fp = open(sourceFilePath, 'rb')
+    print('Uploading ' + sourceFile1)
     ftp.storbinary('STOR ' + sourceFile1, open(sourceFile1, 'rb'), 1024)
+    print('Uploading ' + sourceFile2)
     ftp.storbinary('STOR ' + sourceFile2, open(sourceFile2, 'rb'), 1024)
     ftp.quit()
-    # fp.close()
 
 def fancyPlot(data):
     print('Making total plot...')
@@ -75,7 +58,7 @@ def fancyPlot(data):
     ax1.set_xlabel('Time from Present (days)', size=15)
     ax1.set_ylabel('Sky Temp minus Ground Temp (*C)', size=15)
 
-    plt.savefig('CloudCover-Up.png', dpi=300)
+    plt.savefig('CloudCover-Up.png', dpi=200)
     plt.close()
 
 def plotLog(logname):
