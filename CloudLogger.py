@@ -51,31 +51,32 @@ def fancyPlot(data):
 def plotLog(logname):
     print('Making daily plot...')
     data = pd.read_csv(logname)
+    print('1')
     data.columns = ['timestamp','SkyT','GroundT']
-
+    print('2')
     t = data['timestamp']
     y = data['SkyT']-data['GroundT']
 
     # Convert timestamp to hours and put in a column in data
     data['timeh'] = 99
-
+    print('3')
     for i in range(len(data.index)):
         t2 = int(dt.fromtimestamp(data['timestamp'][i]).strftime('%H')) + float(dt.fromtimestamp(data['timestamp'][i]).strftime('%M'))/60 + float(dt.fromtimestamp(data['timestamp'][i]).strftime('%S'))/3600
         data.loc[i,'timeh'] = t2
-
+    print('4')
     # Arrange the data into blocks and calculate the mean of each block
     # blocksize = 600
     samplerate = 6
     f = interpolate.interp1d(t,y)
     xnew = np.arange(min(data['timestamp']),max(data['timestamp']),samplerate)
     ynew = f(xnew)
-
+    print('5')
     # interval = 1
     n = int(len(ynew))
 
     a = ynew[0:(n-1)].reshape(1,1,n-1)
     block = np.mean(a, axis=1)
-
+    print('6')
     # Plotting section
     plt.figure(figsize = (10,6))
     gs1 = gridspec.GridSpec(2, 1, width_ratios=[1], height_ratios=[1,8])
