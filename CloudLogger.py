@@ -11,7 +11,7 @@ from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime as dt
 from ftpmod import *
 
-def uploadFileFTP(sourceFilePath, server, username, password):
+def uploadFileFTP(sourceFile1, sourceFile2, server, username, password):
     print('Uploading ' + sourceFilePath)
     # myFTP = ftplib.FTP('ftp.orebits.space', 'colibri@orebits.space', 'fEa)d5qh(*^H')
     # if destinationDirectory in [name for name, data in list(remote.mlsd())]:
@@ -31,10 +31,11 @@ def uploadFileFTP(sourceFilePath, server, username, password):
     # ftp.set_debuglevel(2) 
     # ftp.connect(server,21)
     ftp.login(username, password)
-    fp = open(sourceFilePath, 'rb')
-    ftp.storbinary('STOR ' + sourceFilePath, fp, 1024)
+    # fp = open(sourceFilePath, 'rb')
+    ftp.storbinary('STOR ' + sourceFile1, open(sourceFile1, 'rb'), 1024)
+    ftp.storbinary('STOR ' + sourceFile2, open(sourceFile2, 'rb'), 1024)
     ftp.quit()
-    file.close()
+    # fp.close()
 
 def fancyPlot(data):
     print('Making total plot...')
@@ -174,7 +175,7 @@ def main():
 
             if cnt % 3 == 0:
                 plotLog(log_file)
-                uploadFileFTP('./CloudCover-Today.png', server, username, password)
+                uploadFileFTP('./CloudCover-Today.png', './CloudCover-Up.png', server, username, password)
 
             # sendEmail()
         except:
