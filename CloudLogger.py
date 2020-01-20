@@ -9,8 +9,6 @@ from scipy import interpolate
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime as dt
 
-value_array = np.empty((0,3))
-
 def fancyPlot(data):
     print('Plotting...')
 
@@ -50,12 +48,65 @@ def fancyPlot(data):
 
     plt.savefig('clouds.png', dpi=300)
 
-def setupTimedLog(logname):
-    logger = logging.getLogger("Rotating Log")
-    logger.setLevel(logging.INFO)
+def plotLog(logname):
+    data = pd.read_csv(logname)
+    data.columns = ['timestamp','SkyT','GroundT']
+
+    t = data['timestamp']
+    y = data['SkyT']-data['GroundT']
+
+    # Convert timestamp to hours and put in a column in data
+    data['timeh'] = 99
+
+    for i in range(len(data.index)):
+        t2 = int(dt.fromtimestamp(data['timestamp'][i]).strftime('%H')) + float(dt.fromtimestamp(data['timestamp'][i]).strftime('%M'))/60 + float(dt.fromtimestamp(data['timestamp'][i]).strftime('%S'))/3600
+        data.loc[i,'timeh'] = t2
+
+    # Arrange the data into blocks and calculate the mean of each block
+    # blocksize = 600
+    samplerate = 6
+    f = interpolate.interp1d(t,y)
+    xnew = np.arange(min(data['timestamp']),max(data['timestamp']),samplerate)
+    ynew = f(xnew)
+
+    # interval = 1
+    n = int(len(ynew))
+
+    a = ynew[0:(n-1)].reshape(1,1,n-1)
+    block = np.mean(a, axis=1)
+
+    # Plotting section
+    plt.figure(figsize = (10,6))
+    gs1 = gridspec.GridSpec(2, 1, width_ratios=[1], height_ratios=[1,8])
+    gs1.update(wspace=0.025, hspace=0.0) # set the spacing between axes. 
+
+    ax0 = plt.subplot(gs1[0])
+    ax0.pcolorfast(block, cmap='Blues_r', vmin=-20, vmax=-10)
+
+    ax0.set_xticklabels([])
+    ax0.set_xticks([])
+    ax0.set_yticklabels([])
+    ax0.set_yticks([])
+    #ax0.set_xlim(1, len(block[0])+1)
+    plt.title('Cloud Cover', size=20)
+
+    ax1 = plt.subplot(gs1[1])
+    ax1.plot(data['timeh'], y, color='black')
+
+    ax1.set_xlim(min(data['timeh']), max(data['timeh']))
+    ax1.set_xlabel('Local Time', size=15)
+    ax1.set_ylabel('Sky Temp minus Ground Temp (*C)', size=15)
+
+    plt.tight_layout()
+    plt.savefig('CloudCover.png', dpi=200)
+    plt.show()
+
+# def setupTimedLog(logname):
+#     logger = logging.getLogger("Rotating Log")
+#     logger.setLevel(logging.INFO)
  
-    handler = TimedRotatingFileHandler(logname, when="midnight", interval=1, backupCount=30)
-    logger.addHandler(handler)
+#     handler = TimedRotatingFileHandler(logname, when="midnight", interval=1, backupCount=30)
+#     logger.addHandler(handler)
 
 # def sendEmail():
 #     t = time.localtime()
@@ -99,6 +150,10 @@ def main():
 
             if cnt % 6 == 0:
                 fancyPlot(value_array)
+
+            if cnt % 3 == 0:
+                plotLog(log_file)
+                # uploadImage()
 
             # sendEmail()
         except:
