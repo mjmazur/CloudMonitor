@@ -1,6 +1,6 @@
 import logging
 import time
-import ftp, ftplib
+import ftplib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -9,6 +9,32 @@ from socket import *
 from scipy import interpolate
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime as dt
+from ftpmod import *
+
+def uploadFileFTP(sourceFilePath, server, username, password):
+    print('Uploading ' + sourceFilePath)
+    # myFTP = ftplib.FTP('ftp.orebits.space', 'colibri@orebits.space', 'fEa)d5qh(*^H')
+    # if destinationDirectory in [name for name, data in list(remote.mlsd())]:
+    #     print("Destination Directory does not exist. Creating it first")
+    #     myFTP.mkd(destinationDirectory)
+    # # Changing Working Directory
+    # myFTP.cwd(destinationDirectory)
+    # if os.path.isfile(sourceFilePath):
+    #     fh = open(sourceFilePath, 'rb')
+    #     myFTP.storbinary('STOR %s' % f, fh)
+    #     fh.close()
+    #     print('Done uploading...')
+    # else:
+    #     print("Source File does not exist")
+
+    ftp = ftplib.FTP(server)
+    # ftp.set_debuglevel(2) 
+    # ftp.connect(server,21)
+    ftp.login(username, password)
+    fp = open(sourceFilePath, 'rb')
+    ftp.storbinary('STOR ' + sourceFilePath, fp, 1024)
+    ftp.quit()
+    file.close()
 
 def fancyPlot(data):
     print('Making total plot...')
@@ -49,6 +75,7 @@ def fancyPlot(data):
     ax1.set_ylabel('Sky Temp minus Ground Temp (*C)', size=15)
 
     plt.savefig('CloudCover-Up.png', dpi=300)
+    plt.close()
 
 def plotLog(logname):
     print('Making daily plot...')
@@ -100,13 +127,7 @@ def plotLog(logname):
     ax1.set_ylabel('Sky Temp minus Ground Temp (*C)', size=15)
 
     plt.savefig('CloudCover-Today.png', dpi=200)
-
-# def setupTimedLog(logname):
-#     logger = logging.getLogger("Rotating Log")
-#     logger.setLevel(logging.INFO)
- 
-#     handler = TimedRotatingFileHandler(logname, when="midnight", interval=1, backupCount=30)
-#     logger.addHandler(handler)
+    plt.close()
 
 # def sendEmail():
 #     t = time.localtime()
@@ -153,7 +174,7 @@ def main():
 
             if cnt % 3 == 0:
                 plotLog(log_file)
-                uploadFileFTP('./CloudCover-Today.png', 'colibri', 'server', 'username', 'password')
+                uploadFileFTP('./CloudCover-Today.png', server, username, password)
 
             # sendEmail()
         except:
