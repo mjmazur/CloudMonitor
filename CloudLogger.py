@@ -10,7 +10,7 @@ from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime as dt
 
 def fancyPlot(data):
-    print('Plotting...')
+    print('Making total plot...')
 
     # Arrange the data into blocks and calculate the mean of each block
     samplerate = 10
@@ -49,6 +49,7 @@ def fancyPlot(data):
     plt.savefig('clouds.png', dpi=300)
 
 def plotLog(logname):
+    print('Making daily plot...')
     data = pd.read_csv(logname)
     data.columns = ['timestamp','SkyT','GroundT']
 
