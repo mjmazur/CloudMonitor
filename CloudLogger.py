@@ -16,6 +16,7 @@ def fancyPlot(data):
     # Arrange the data into blocks and calculate the mean of each block
     samplerate = 10
     t = data[:,0].astype(np.int)
+    t = -1*(t-min(t))/(3600.0*24)
     y = data[:,1].astype(np.float)-data[:,2].astype(np.float)
 
     f = interpolate.interp1d(t,y)
