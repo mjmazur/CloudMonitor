@@ -9,26 +9,7 @@ from scipy import interpolate
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime as dt
 
-#name = time.strftime('%Y_%m_%d_%H_%M_%S', time.gmtime())
-#date = time.strftime('%Y%m%d', time.localtime())
-
-#f=open(name+'.csv', 'a+');
-#writer = csv.writer(f,delimiter=',')
 value_array = np.empty((0,3))
-
-# def plotData(data):
-#     print('Plotting...')
-#     t = data[:,0].astype(np.int)
-#     y = data[:,1].astype(np.float)-data[:,2].astype(np.float)
-
-#     fig, ax = plt.subplots(figsize=(14,10))
-#     plt.scatter(t, y)
-
-#     ax.set_xlabel('Time', size=15)
-#     ax.set_ylabel('Temperature Difference (*C)', size=15)
-
-#     plt.tight_layout()
-#     plt.savefig('test.png', dpi=300)
 
 def fancyPlot(data):
     print('Plotting...')
@@ -76,9 +57,13 @@ def setupTimedLog(logname):
     handler = TimedRotatingFileHandler(logname, when="midnight", interval=1, backupCount=30)
     logger.addHandler(handler)
 
-def sendEmail():
-    now = dt.now()
-    nearmidnight = now.hour == 23 and now.minute ==59
+# def sendEmail():
+#     t = time.localtime()
+#     nearmidnight = t.tm_hour == 23 and t.tm_min ==59
+#     nearnoon = t.tm_hour == 11 and t.tm_min == 59
+    
+#     if nearmidnight:
+
 
 def main():
     value_array = np.empty((0,3))
@@ -114,6 +99,8 @@ def main():
 
             if cnt % 6 == 0:
                 fancyPlot(value_array)
+
+            # sendEmail()
         except:
             pass
 
