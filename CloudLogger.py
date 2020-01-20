@@ -50,7 +50,7 @@ def fancyPlot(data):
 
 def plotLog(logname):
     print('Making daily plot...')
-    data = pd.read_csv(logname)
+    data = pd.read_csv("current.log")
     print('1')
     data.columns = ['timestamp','SkyT','GroundT']
     print('2')
