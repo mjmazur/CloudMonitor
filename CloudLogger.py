@@ -2,6 +2,7 @@ import logging
 import time
 #import csv
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from socket import *
@@ -50,7 +51,7 @@ def fancyPlot(data):
 
 def plotLog(logname):
     print('Making daily plot...')
-    data = pd.read_csv("current.log")
+    data = pd.read_csv(logname)
     print('1')
     data.columns = ['timestamp','SkyT','GroundT']
     print('2')
