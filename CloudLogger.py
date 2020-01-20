@@ -153,7 +153,7 @@ def main():
 
             if cnt % 3 == 0:
                 plotLog(log_file)
-                # uploadImage()
+                uploadFileFTP('./CloudCover-Today.png', 'colibri', 'server', 'username', 'password')
 
             # sendEmail()
         except:
