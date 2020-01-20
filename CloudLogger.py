@@ -1,6 +1,6 @@
 import logging
 import time
-import ftp.py
+import ftp, ftplib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
