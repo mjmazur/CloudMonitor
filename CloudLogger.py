@@ -26,7 +26,7 @@ def fancyPlot(data):
     # Arrange the data into blocks and calculate the mean of each block
     samplerate = 10
     t = data[:,0].astype(np.int)
-    t = -1*(t-min(t))/(3600.0*24)
+    t = -1*(t-max(t))/(3600.0*24)
     y = data[:,1].astype(np.float)-data[:,2].astype(np.float)
 
     f = interpolate.interp1d(t,y)
@@ -43,7 +43,7 @@ def fancyPlot(data):
     gs1.update(wspace=0.025, hspace=0.0) # set the spacing between axes. 
 
     ax0 = plt.subplot(gs1[0])
-    ax0.pcolorfast(block, cmap='Blues_r', vmin=-25, vmax=-6)
+    ax0.pcolorfast(block, cmap='Blues_r', vmin=-20, vmax=-10)
 
     ax0.set_xticklabels([])
     ax0.set_xticks([])
@@ -156,7 +156,7 @@ def main():
             if cnt % 6 == 0:
                 fancyPlot(value_array)
 
-            if cnt % 3 == 0:
+            if cnt % 30 == 0:
                 plotLog(log_file)
                 uploadFileFTP('./CloudCover-Today.png', './CloudCover-Up.png', server, username, password)
 
