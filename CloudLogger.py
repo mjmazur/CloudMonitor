@@ -1,5 +1,4 @@
 import logging
-import time
 import ftplib
 import numpy as np
 import pandas as pd
@@ -10,6 +9,7 @@ from scipy import interpolate
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime as dt
 from ftpmod import *
+from time import sleep
 
 def uploadFileFTP(sourceFile1, sourceFile2, server, username, password):
     print('Uploading ' + sourceFilePath)
@@ -181,7 +181,7 @@ def main():
         except:
             pass
 
-        time.sleep(10) #delay before sending next command
+        sleep(10) #delay before sending next command
 
     f.close()
 

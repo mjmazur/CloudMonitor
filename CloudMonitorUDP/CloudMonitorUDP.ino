@@ -7,6 +7,20 @@
 const byte IRAddress1 = 0x5B;
 const byte IRAddress2 = 0x5A;
 
+//////////////////////////////////
+// Setup light sensor variables //
+//////////////////////////////////
+const bool LIGHTSENSOR = true;
+int lightPin = 0;
+int lightReading;
+const int numReadings = 10;
+int total = 0;
+int average = 0;
+float lux;
+
+///////////////////////////////
+// Setup IR sensor variables //
+///////////////////////////////
 float temp1 = 1;
 float temp2 = 2;
 
@@ -38,7 +52,7 @@ void setup() {
   therm2.setUnit(TEMP_C);
 
   // Send a reset to the W5500 to make sure it works
-  pinMode(9, OUTPUT); 
+  pinMode(9, OUTPUT);
   digitalWrite(9, LOW);
   delayMicroseconds(500);
   digitalWrite(9, HIGH);
@@ -57,7 +71,7 @@ void loop() {
 
   packetSize = Udp.parsePacket();
   //Serial.println('yabba');
-  
+
   if(packetSize > 0)
   {
     Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
@@ -68,18 +82,28 @@ void loop() {
     {
       therm1.read();
       therm2.read();
-      
+
       float t1 = therm1.object();
-      char buf[20];
+      char buf[30];
       dtostrf(t1, 6, 2, buf);
-      
+
       float t2 = therm2.object();
       char buf2[10];
       dtostrf(t2, 6, 2, buf2);
-      
-      strcat(buf, buf2);
+
+      if (LIGHTSENSOR == true) {
+        lux = getLux();
+        char buf3[10];
+        dtostrf(lux, 6, 2, buf3);
+
+        strcat(buf, buf2, buf3);
+      }
+      else {
+        strcat(buf, buf2);
+      }
+
       Serial.println(buf);
-      
+
       Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
       Udp.print(buf);
       Udp.endPacket();
@@ -101,58 +125,27 @@ void loop() {
     }
   }
   delay(2000);
-// listen for incoming clients
-//  EthernetClient client = server.available();
-//  if (client) {
-//    Serial.println("new client");
-//    // an http request ends with a blank line
-//    boolean currentLineIsBlank = true;
-//    while (client.connected()) {
-//      if (client.available()) {
-//        temp1 = therm1.object();
-//        temp2 = therm2.object();
-//        char c = client.read();
-//        Serial.write(c);
-//        // if you've gotten to the end of the line (received a newline
-//        // character) and the line is blank, the http request has ended,
-//        // so you can send a reply
-//        if (c == '\n' && currentLineIsBlank) {
-//          // send a standard http response header
-//          client.println("HTTP/1.1 200 OK");
-//          client.println("Content-Type: text/html");
-//          client.println("Connection: close");  // the connection will be closed after completion of the response
-//          client.println("Refresh: 5");  // refresh the page automatically every 5 sec
-//          client.println();
-//          client.println("<!DOCTYPE HTML>");
-//          client.println("<html>");
-//
-//          client.print("Temp 1: ");
-//          if (therm1.read()) { client.print(therm1.object());}
-//          client.println("<br />");
-//          client.print("Temp 2: ");
-//          if (therm2.read()) { client.print(therm2.object());}
-//          client.println("<br />");
-//          client.println("------- -----");
-//          client.println("<br />");
-//          client.print("T1-T2:  ");
-//          client.println(therm1.object()-therm2.object());
-//          client.println("</html>");
-//          break;
-//        }
-//        if (c == '\n') {
-//          // you're starting a new line
-//          currentLineIsBlank = true;
-//        }
-//        else if (c != '\r') {
-//          // you've gotten a character on the current line
-//          currentLineIsBlank = false;
-//        }
-//      }
-//    }
-//    // give the web browser time to receive the data
-//    delay(1);
-//    // close the connection:
-//    client.stop();
-//    Serial.println("client disconnected");
-//  }
+}
+
+////////////////////////////////////////////////////
+// Function to get the ambient light level in lux //
+////////////////////////////////////////////////////
+float getLux() {
+    // Average light sensor readings over 'numReadings'
+  for (int i = 0; i < numReadings; i++){
+    lightReading = analogRead(lightPin);
+    total = total + lightReading;
+    //Serial.println(total);
+    delay(10);
+  }
+  average = total / numReadings;
+  total = 0;
+
+  // Convert analog light reading to lux
+  lux = pow(10,6.6162) * pow(average,-1.9191);
+
+  // Print readings to serial monitor
+  Serial.print("Reading: "); Serial.print(average);
+  Serial.print(" ==> "); Serial.print(lux); Serial.println(" lux");
+  return lux;
 }
