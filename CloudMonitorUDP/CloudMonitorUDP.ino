@@ -31,15 +31,12 @@ IRTherm therm2;
 byte mac[] = { 0xBA, 0xD1, 0xDE, 0xA5, 0x00, 0x00 };
 IPAddress ip(10, 0, 20, 10);
 unsigned int localPort = 8888;
+
 char packetBuffer[UDP_TX_PACKET_MAX_SIZE];
 String datReq;
 int packetSize;
 
 EthernetUDP Udp;
-// Initialize the Ethernet server library
-// with the IP address and port you want to use
-// (port 80 is default for HTTP):
-//EthernetServer server(80);
 
 void setup() {
   // Open serial communications and wait for port to open:
@@ -70,13 +67,11 @@ void setup() {
 void loop() {
 
   packetSize = Udp.parsePacket();
-  //Serial.println('yabba');
 
   if(packetSize > 0)
   {
     Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
     String datReq(packetBuffer);
-    //Serial.println(datReq);
 
     if (datReq == "All")
     {
@@ -107,21 +102,15 @@ void loop() {
       Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
       Udp.print(buf);
       Udp.endPacket();
-      //Serial.println(therm1.object());
     }
     else if (datReq == "Ttwo")
     {
       therm2.read(); //therm2.read();
-      //float t1 = therm1.object();
       float t2 = therm2.object();
-      //char replyBuffer[20];
-      //sprintf(replyBuffer, "%f", t1);
-      //Serial.println(replyBuffer);
+
       Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
       Udp.print(t2);
-      //Udp.print(replyBuffer);
       Udp.endPacket();
-      Serial.println(therm2.object());
     }
   }
   delay(2000);
