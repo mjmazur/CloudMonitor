@@ -12,30 +12,13 @@ from ftpmod import *
 from time import sleep
 
 def uploadFileFTP(sourceFile1, sourceFile2, server, username, password):
-    print('Uploading ' + sourceFilePath)
-    # myFTP = ftplib.FTP('ftp.orebits.space', 'colibri@orebits.space', 'fEa)d5qh(*^H')
-    # if destinationDirectory in [name for name, data in list(remote.mlsd())]:
-    #     print("Destination Directory does not exist. Creating it first")
-    #     myFTP.mkd(destinationDirectory)
-    # # Changing Working Directory
-    # myFTP.cwd(destinationDirectory)
-    # if os.path.isfile(sourceFilePath):
-    #     fh = open(sourceFilePath, 'rb')
-    #     myFTP.storbinary('STOR %s' % f, fh)
-    #     fh.close()
-    #     print('Done uploading...')
-    # else:
-    #     print("Source File does not exist")
-
     ftp = ftplib.FTP(server)
-    # ftp.set_debuglevel(2) 
-    # ftp.connect(server,21)
     ftp.login(username, password)
-    # fp = open(sourceFilePath, 'rb')
+    print('Uploading ' + sourceFile1)
     ftp.storbinary('STOR ' + sourceFile1, open(sourceFile1, 'rb'), 1024)
+    print('Uploading ' + sourceFile2)
     ftp.storbinary('STOR ' + sourceFile2, open(sourceFile2, 'rb'), 1024)
     ftp.quit()
-    # fp.close()
 
 def fancyPlot(data):
     print('Making total plot...')
@@ -43,7 +26,7 @@ def fancyPlot(data):
     # Arrange the data into blocks and calculate the mean of each block
     samplerate = 10
     t = data[:,0].astype(np.int)
-    t = -1*(t-min(t))/(3600.0*24)
+    t = (t-max(t))/(3600.0*24)
     y = data[:,1].astype(np.float)-data[:,2].astype(np.float)
 
     f = interpolate.interp1d(t,y)
@@ -60,7 +43,7 @@ def fancyPlot(data):
     gs1.update(wspace=0.025, hspace=0.0) # set the spacing between axes. 
 
     ax0 = plt.subplot(gs1[0])
-    ax0.pcolorfast(block, cmap='Blues_r', vmin=-25, vmax=-6)
+    ax0.pcolorfast(block, cmap='Blues_r', vmin=-20, vmax=-10)
 
     ax0.set_xticklabels([])
     ax0.set_xticks([])
@@ -75,7 +58,7 @@ def fancyPlot(data):
     ax1.set_xlabel('Time from Present (days)', size=15)
     ax1.set_ylabel('Sky Temp minus Ground Temp (*C)', size=15)
 
-    plt.savefig('CloudCover-Up.png', dpi=300)
+    plt.savefig('CloudCover-Up.png', dpi=200)
     plt.close()
 
 def plotLog(logname):
@@ -173,7 +156,7 @@ def main():
             if cnt % 6 == 0:
                 fancyPlot(value_array)
 
-            if cnt % 3 == 0:
+            if cnt % 30 == 0:
                 plotLog(log_file)
                 uploadFileFTP('./CloudCover-Today.png', './CloudCover-Up.png', server, username, password)
 
