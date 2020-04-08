@@ -48,7 +48,7 @@ def fancyPlot(data):
     ax1.set_xlabel('Local Time', size=15)
     ax1.set_ylabel('Sky Temp minus Ground Temp (*C)', size=15)
 
-    plt.savefig('test.png', dpi=300)
+    plt.savefig('clouds.png', dpi=300)
 
 def setupTimedLog(logname):
     logger = logging.getLogger("Rotating Log")
@@ -69,13 +69,23 @@ def setupTimedLog(logname):
 
 
 def main():
+    value_array = np.empty((0,3))
     log_file = "current.log"
-    setupTimedLog(log_file)
+
+    logger = logging.getLogger("Rotating Log")
+    logger.setLevel(logging.INFO)
+    handler = TimedRotatingFileHandler(log_file,
+                                       when="midnight",
+                                       interval=1,
+                                       backupCount=30)
+    logger.addHandler(handler)
+
+    # setupTimedLog(log_file)
 
     # Setup remote cloud monitor
     address= ( b'10.0.20.10', 8888) #define server IP and port
     client_socket =socket(AF_INET, SOCK_DGRAM) #Set up the Socket
-    client_socket.settimeout(2) #Only wait 2 seconds for a response
+    client_socket.settimeout(5) #Only wait 2 seconds for a response
 
     cnt = 0
 
@@ -90,6 +100,7 @@ def main():
             print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]))
             # writer.writerow(write_buffer.split()) # Append data to csv file
             # logger.info(write_buffer)
+
             logger.info(str(value_array[cnt,0]) + ',' + str(value_array[cnt,1]) + ',' + str(value_array[cnt,2]))
 
             cnt += 1
