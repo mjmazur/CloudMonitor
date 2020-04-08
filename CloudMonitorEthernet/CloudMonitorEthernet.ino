@@ -20,6 +20,20 @@
 #include <Wire.h> // I2C library, required for MLX90614
 #include <SparkFunMLX90614.h> // SparkFunMLX90614 Arduino library
 
+//////////////////////////////////
+// Setup light sensor variables //
+//////////////////////////////////
+const bool LIGHTSENSOR  = true;
+int lightPin = 0;
+int lightReading;
+const int numReadings = 10;
+int total = 0;
+int average = 0;
+float lux;
+
+///////////////////////////////
+// Setup IR sensor variables //
+///////////////////////////////
 const byte IRAddress1 = 0x5A;
 const byte IRAddress2 = 0x5B;
 
@@ -49,7 +63,7 @@ void setup() {
   therm2.setUnit(TEMP_C);
 
   // Send a reset to the W5500 to make sure it works
-  pinMode(9, OUTPUT); 
+  pinMode(9, OUTPUT);
   digitalWrite(9, LOW);
   delayMicroseconds(500);
   digitalWrite(9, HIGH);
@@ -71,6 +85,7 @@ void loop() {
     boolean currentLineIsBlank = true;
     while (client.connected()) {
       if (client.available()) {
+        lux = getLux();
         temp1 = therm1.object();
         temp2 = therm2.object();
         char c = client.read();
@@ -98,6 +113,9 @@ void loop() {
           client.println("<br />");
           client.print("T1-T2:  ");
           client.println(therm1.object()-therm2.object());
+          client.println("<br />");
+          client.print("Lux: ");
+          client.println(lux);
           client.println("</html>");
           break;
         }
@@ -117,4 +135,27 @@ void loop() {
     client.stop();
     Serial.println("client disconnected");
   }
+}
+
+////////////////////////////////////////////////////
+// Function to get the ambient light level in lux //
+////////////////////////////////////////////////////
+float getLux() {
+    // Average light sensor readings over 'numReadings'
+  for (int i = 0; i < numReadings; i++){
+    lightReading = analogRead(lightPin);
+    total = total + lightReading;
+    //Serial.println(total);
+    delay(10);
+  }
+  average = total / numReadings;
+  total = 0;
+
+  // Convert analog light reading to lux
+  lux = pow(10,6.6162) * pow(average,-1.9191);
+
+  // Print readings to serial monitor
+  Serial.print("Reading: "); Serial.print(average);
+  Serial.print(" ==> "); Serial.print(lux); Serial.println(" lux");
+  return lux;
 }

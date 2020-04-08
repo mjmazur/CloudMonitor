@@ -6,7 +6,7 @@ from scipy import interpolate
 from datetime import datetime
 
 data = pd.read_csv('current.log')
-data.columns = ['timestamp','SkyT','GroundT','deltaT']
+data.columns = ['timestamp','SkyT','GroundT']
 
 
 t = data['timestamp']
