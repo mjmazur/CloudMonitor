@@ -1,5 +1,4 @@
 import logging
-import time
 import ftplib
 import numpy as np
 import pandas as pd
@@ -10,6 +9,7 @@ from scipy import interpolate
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime as dt
 from ftpmod import *
+from time import sleep
 
 def uploadFileFTP(sourceFile1, sourceFile2, server, username, password):
     ftp = ftplib.FTP(server)
@@ -129,8 +129,6 @@ def main():
     handler = TimedRotatingFileHandler(log_file, when="midnight", interval=1, backupCount=30)
     logger.addHandler(handler)
 
-    #setupTimedLog(log_file)
-
     # Setup remote cloud monitor
     address= ( b'10.0.20.10', 8888) #define server IP and port
     client_socket =socket(AF_INET, SOCK_DGRAM) #Set up the Socket
@@ -148,6 +146,7 @@ def main():
             value_array = np.append(value_array, [write_buffer.split()], axis=0) # Append data to an array for plotting
             print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]))
             # writer.writerow(write_buffer.split()) # Append data to csv file
+
             logger.info(str(value_array[cnt,0]) + ',' + str(value_array[cnt,1]) + ',' + str(value_array[cnt,2]))
 
             cnt += 1
@@ -163,7 +162,7 @@ def main():
         except:
             pass
 
-        time.sleep(10) #delay before sending next command
+        sleep(10) #delay before sending next command
 
     f.close()
 
