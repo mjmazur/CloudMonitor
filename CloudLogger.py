@@ -22,13 +22,12 @@ def uploadFileFTP(sourceFile1, sourceFile2, server, username, password):
 
 def fancyPlot(data):
     print('Making total plot...')
-
     # Arrange the data into blocks and calculate the mean of each block
-    samplerate = 10
     t = data[:,0].astype(np.int)
     t = (t-max(t))/(3600.0*24)
     y = data[:,1].astype(np.float)-data[:,2].astype(np.float)
 
+    samplerate = 600/86400 # Should be in fraction of days. 1/86400 = 1 second
     f = interpolate.interp1d(t,y)
     xnew = np.arange(min(t),max(t),samplerate)
     ynew = f(xnew)
