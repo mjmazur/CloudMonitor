@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+import time
 from socket import *
 from scipy import interpolate
 from logging.handlers import TimedRotatingFileHandler
@@ -20,7 +21,7 @@ def uploadFileFTP(sourceFile1, sourceFile2, server, username, password):
     ftp.storbinary('STOR ' + sourceFile2, open(sourceFile2, 'rb'), 1024)
     ftp.quit()
 
-def fancyPlot(data):
+def fancyPlot(data, imagedir):
     print('Making total plot...')
     # Arrange the data into blocks and calculate the mean of each block
     t = data[:,0].astype(np.int)
@@ -57,10 +58,10 @@ def fancyPlot(data):
     ax1.set_xlabel('Time from Present (days)', size=15)
     ax1.set_ylabel('Sky Temp minus Ground Temp (*C)', size=15)
 
-    plt.savefig('CloudCover-Up.png', dpi=200)
+    plt.savefig(imagedir + 'CloudCover-Up.png', dpi=200)
     plt.close()
 
-def plotLog(logname):
+def plotLog(logname, imagedir):
     print('Making daily plot...')
     data = pd.read_csv(logname)
     data.columns = ['timestamp','SkyT','GroundT']
@@ -109,7 +110,7 @@ def plotLog(logname):
     ax1.set_xlabel('Local Time', size=15)
     ax1.set_ylabel('Sky Temp minus Ground Temp (*C)', size=15)
 
-    plt.savefig('CloudCover-Today.png', dpi=200)
+    plt.savefig(imagedir + 'CloudCover-Today.png', dpi=200)
     plt.close()
 
 # def sendEmail():
@@ -123,7 +124,9 @@ def plotLog(logname):
 def main():
     value_array = np.empty((0,3))
 
-    log_file = "current.log"
+    log_file = "d:\\Weather\\Logs\\CloudMonitor\\current-cloud.log"
+    image_dir = "d:\\Weather\\Images\\CloudMonitor\\"
+
     logger = logging.getLogger("Rotating Log")
     logger.setLevel(logging.INFO)
     handler = TimedRotatingFileHandler(log_file, when="midnight", interval=1, backupCount=30)
@@ -152,17 +155,17 @@ def main():
             cnt += 1
 
             if cnt % 6 == 0:
-                fancyPlot(value_array)
+                fancyPlot(value_array, image_dir)
 
             if cnt % 30 == 0:
-                plotLog(log_file)
-                uploadFileFTP('./CloudCover-Today.png', './CloudCover-Up.png', server, username, password)
+                plotLog(log_file, image_dir)
+                # uploadFileFTP(image_dir + 'CloudCover-Today.png', image_dir + 'CloudCover-Up.png', server, username, password)
 
             # sendEmail()
         except:
             pass
 
-        sleep(10) #delay before sending next command
+        sleep(2) #delay before sending next command
 
     f.close()
 
