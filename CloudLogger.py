@@ -154,7 +154,7 @@ def main():
 
             cnt += 1
 
-            if cnt % 6 == 0:
+            if cnt % 10 == 0:
                 fancyPlot(value_array, image_dir)
 
             if cnt % 30 == 0:
@@ -165,9 +165,9 @@ def main():
         except:
             pass
 
-        sleep(2) #delay before sending next command
+        sleep(30) #delay before sending next command
 
-    f.close()
+    # f.close()
 
 if __name__ == "__main__":
     main()
