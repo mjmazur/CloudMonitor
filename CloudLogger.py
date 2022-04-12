@@ -5,6 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import time
+import os
 from socket import *
 from scipy import interpolate
 from logging.handlers import TimedRotatingFileHandler
@@ -53,6 +54,7 @@ def fancyPlot(data, imagedir):
 
     ax1 = plt.subplot(gs1[1])
     ax1.plot(t, y, color='black')
+    ax1.axhline(y=-17)
 
     ax1.set_xlim(min(t), max(t))
     ax1.set_xlabel('Time from Present (days)', size=15)
@@ -124,18 +126,20 @@ def plotLog(logname, imagedir):
 def main():
     value_array = np.empty((0,3))
 
-    log_file = "d:\\Weather\\Logs\\CloudMonitor\\current-cloud.log"
-    image_dir = "d:\\Weather\\Images\\CloudMonitor\\"
+    log_file = "d:\\Logs\\Weather\\CloudMonitor\\current-cloud.log"
+    image_dir = "d:\\Logs\\Weather\\Images\\CloudMonitor\\"
 
     logger = logging.getLogger("Rotating Log")
     logger.setLevel(logging.INFO)
-    handler = TimedRotatingFileHandler(log_file, when="midnight", interval=1, backupCount=30)
+    handler = TimedRotatingFileHandler(log_file, when="midnight", interval=1, backupCount=90)
     logger.addHandler(handler)
 
     # Setup remote cloud monitor
     address= ( b'10.0.20.10', 8888) #define server IP and port
     client_socket =socket(AF_INET, SOCK_DGRAM) #Set up the Socket
     client_socket.settimeout(5) #Only wait 2 seconds for a response
+
+    old_log_size = os.path.getsize(log_file)
 
     cnt = 0
 
@@ -147,10 +151,16 @@ def main():
             rec_data, addr = client_socket.recvfrom(2048) # Read the response from arduino
             write_buffer = str(int(time.time())) + ' ' + str(rec_data, 'utf-8') # Format string with Unix time and rec_data
             value_array = np.append(value_array, [write_buffer.split()], axis=0) # Append data to an array for plotting
-            print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]))
+            print('Time: ' + str(value_array[cnt,0]) + '   Sky T: ' + str(value_array[cnt,1]) + '   Gnd T: ' + str(value_array[cnt,2]) + '  Delta T: ' + str(float(value_array[cnt,1]) - float(value_array[cnt,2])))
             # writer.writerow(write_buffer.split()) # Append data to csv file
 
             logger.info(str(value_array[cnt,0]) + ',' + str(value_array[cnt,1]) + ',' + str(value_array[cnt,2]))
+
+            log_size = os.path.getsize(log_file)
+            if log_size < old_log_size:
+                os.rename(image_dir + "CloudCover-Today.png", image_dir + "CloudCover-" + (dt.datetime.now()-dt.timedelta(1)).strftime("%Y%m%d"))
+  
+            old_log_size = log_size
 
             cnt += 1
 

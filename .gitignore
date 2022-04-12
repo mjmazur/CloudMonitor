@@ -30,3 +30,4 @@ current.log
 ftp.py
 ftpmod.py
 __pycache__/ftpmod.cpython-37.pyc
+CloudLogger.bat
