@@ -139,7 +139,7 @@ def main():
     client_socket =socket(AF_INET, SOCK_DGRAM) #Set up the Socket
     client_socket.settimeout(5) #Only wait 2 seconds for a response
 
-    old_log_size = os.path.getsize(log_file)
+    # old_log_size = os.path.getsize(log_file)
 
     cnt = 0
 
@@ -155,12 +155,12 @@ def main():
             # writer.writerow(write_buffer.split()) # Append data to csv file
 
             logger.info(str(value_array[cnt,0]) + ',' + str(value_array[cnt,1]) + ',' + str(value_array[cnt,2]))
-
-            log_size = os.path.getsize(log_file)
-            if log_size < old_log_size:
-                os.rename(image_dir + "CloudCover-Today.png", image_dir + "CloudCover-" + (dt.datetime.now()-dt.timedelta(1)).strftime("%Y%m%d"))
+            print(value_array[cnt,1])
+            # log_size = os.path.getsize(log_file)
+            # if log_size < old_log_size:
+            #     os.rename(image_dir + "CloudCover-Today.png", image_dir + "CloudCover-" + (dt.datetime.now()-dt.timedelta(1)).strftime("%Y%m%d"))
   
-            old_log_size = log_size
+            # old_log_size = log_size
 
             cnt += 1
 
